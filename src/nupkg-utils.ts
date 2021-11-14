@@ -24,15 +24,15 @@ export function getManifest(folder: string): string {
 export function updateManifest(xml: string): string {
     var js = convert.xml2js(xml);
 
-    //var version = _.flow([
-    //    _.filter((o: convert.Element) => o.name == ""),
-    //    _.head
-    //])(js.elements)
+    var metadata = js.elements[0].elements[0].elements;
 
-    var version = _.filter((o: convert.Element) => o.name == "")(js)
+    var version: convert.Element = _.flow([
+        _.find((o: convert.Element) => o.name === "version"),
+        _.property('elements'),
+        _.find((o: convert.Element) => o.type == "text")
+    ])(metadata)
 
-    console.log(js.elements)
-    console.log(version)
+    version.text = "0.2.0"
 
     return convert.js2xml(js);
 }
