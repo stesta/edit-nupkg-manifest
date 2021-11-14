@@ -1,15 +1,14 @@
-import {updateManifest} from '../src/nupkg-utils'
+import {getManifest, updateManifest} from '../src/nupkg-utils'
 import * as process from 'process'
 import * as cp from 'child_process'
 import * as path from 'path'
 import {expect, test} from '@jest/globals'
 
 test('update manifest version', () => {
-    var xml = '<?xml version="1.0"?><package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"><metadata><id>HylandCheckout.Web</id><title>Hyland Checkout</title><version>$version$</version><authors>Hyland Ecosystem Team</authors><owners>Hyland Ecosystem Team</owners><description>The Hyland Checkout web application</description></metadata></package>'
+   var manifest = getManifest("./__tests__/test.nuspec")
+   updateManifest(manifest);
 
-    var updated = updateManifest(xml);
-
-    expect(updated).toBe(xml);
+   expect(JSON.stringify(manifest)).toContain("repository");
 })
 
 // shows how the runner will run a javascript action with env / stdout protocol

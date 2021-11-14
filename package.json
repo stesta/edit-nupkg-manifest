@@ -26,8 +26,10 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.6.0",
+    "glob": "^7.2.0",
     "jszip": "^3.7.1",
     "lodash": "^4.17.21",
+    "node-glob": "^1.2.0",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {

@@ -1,7 +1,6 @@
 import JSZip from 'jszip'
 import fs from 'fs'
 import convert from 'xml-js'
-import * as _ from 'lodash/fp'
 
 export function unpack(nupkg: string): string {
     var zip = new JSZip()
@@ -17,32 +16,51 @@ export function repack(folder: string): void {
 
 }
 
-export function getManifest(folder: string): string {
-    return folder + "/.nuspec"
+export function getManifest(path: string): convert.Element | convert.ElementCompact {
+    var xml = fs.readFileSync(path, 'utf-8')
+    return convert.xml2js(xml)
 }
 
-export function updateManifest(xml: string): string {
-    var js = convert.xml2js(xml);
+function updateMetadata(metadata: convert.Element[], name: string, text: string): convert.Element[] {
+    var field = metadata
+        .find(el => el.name == name)
+        ?.elements!
+        ?.find(el => el.type == "text")
 
-    var metadata: convert.Element[] = js.elements[0].elements[0].elements;
-    console.log(metadata);
+    // is there a good pattern matching solution in typescript?
+    if (field != undefined) {
+        field.text = text
+    }
+    // if the field doesn't exist then add it
+    else {
+        metadata.push({
+            type: 'element',
+            name: name,
+            text: text
+        })
+    }
 
-    var version: convert.Element = _.flow([
-        _.find((o: convert.Element) => o.name === "version"),
-        _.property('elements'),
-        _.find((o: convert.Element) => o.type == "text")
-    ])(metadata)
+    return metadata
+}
 
+function addRepositoryMetadata(metadata: convert.Element[], type: string, url: string): convert.Element[] {
     metadata.push({
         type: 'element',
         name: 'repository',
         attributes: {
-            type: 'git',
-            url: 'https://github.com/stesta/repo'
+            type: type,
+            url: url
         }
     })
 
-    version.text = "0.2.0"
+    return metadata
+}
 
-    return convert.js2xml(js);
+export function updateManifest(manifest: convert.Element | convert.ElementCompact): convert.Element | convert.ElementCompact {
+    var metadata: convert.Element[] = manifest.elements[0].elements[0].elements
+
+    metadata = updateMetadata(metadata, "version", "0.2.0")
+    metadata = addRepositoryMetadata(metadata, "git", "https://github.com/stesta/repo")
+
+    return manifest;
 }

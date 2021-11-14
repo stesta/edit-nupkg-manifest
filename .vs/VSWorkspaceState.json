@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\src"
+    "\\src",
+    "\\__tests__"
   ],
-  "SelectedNode": "\\src\\test.dib",
+  "SelectedNode": "\\package.json",
   "PreviewInSolutionExplorer": false
 }
