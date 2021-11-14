@@ -24,13 +24,23 @@ export function getManifest(folder: string): string {
 export function updateManifest(xml: string): string {
     var js = convert.xml2js(xml);
 
-    var metadata = js.elements[0].elements[0].elements;
+    var metadata: convert.Element[] = js.elements[0].elements[0].elements;
+    console.log(metadata);
 
     var version: convert.Element = _.flow([
         _.find((o: convert.Element) => o.name === "version"),
         _.property('elements'),
         _.find((o: convert.Element) => o.type == "text")
     ])(metadata)
+
+    metadata.push({
+        type: 'element',
+        name: 'repository',
+        attributes: {
+            type: 'git',
+            url: 'https://github.com/stesta/repo'
+        }
+    })
 
     version.text = "0.2.0"
 
