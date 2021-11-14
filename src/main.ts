@@ -7,14 +7,14 @@ async function run(): Promise<void> {
     const nupkgPath: string = core.getInput('nupkg-path')
     const version: string = core.getInput('version')
 
-      var folder = utils.unpack(nupkgPath);
-      var manifest = utils.getManifest(folder);
+      let folder = await utils.unpack(nupkgPath);
+      let manifest = await utils.getManifest(folder);
 
-      var js = convert.xml2js(manifest);
-      
+      let metadata: convert.Element[] = manifest.elements[0].elements[0].elements // todo: get these elements in a better way
+      utils.updateMetadata(metadata, "version", "0.2.0")
+      utils.addRepositoryMetadata(metadata, "git", "https://github.com/stesta/repo")
 
-      utils.updateManifest(convert.js2xml(js));
-      utils.repack(folder);
+      await utils.repack(folder, manifest);
 
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
