@@ -1,14 +1,20 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as utils from './nupkg-utils'
+import convert from 'xml-js'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const nupkgPath: string = core.getInput('nupkg-path')
+    const version: string = core.getInput('version')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+      var folder = utils.unpack(nupkgPath);
+      var manifest = utils.getManifest(folder);
+
+      var js = convert.xml2js(manifest);
+      
+
+      utils.updateManifest(convert.js2xml(js));
+      utils.repack(folder);
 
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
