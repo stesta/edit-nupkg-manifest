@@ -4,8 +4,8 @@
     <id>Test</id>
     <title>Test</title>
     <version>$version$</version>
-    <authors>Hyland Ecosystem Team</authors>
-    <owners>Hyland Ecosystem Team</owners>
-    <description>The Hyland Checkout web application</description>
+    <authors>Steve Testa</authors>
+    <owners>Steve Testa</owners>
+    <description>Test Package</description>
   </metadata>
 </package>

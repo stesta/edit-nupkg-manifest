@@ -1,6 +1,10 @@
 # Dependency directory
 node_modules
 
+# visual studio and code
+.vs/
+*.suo
+
 # Rest pulled from https://github.com/github/gitignore/blob/master/Node.gitignore
 # Logs
 logs
