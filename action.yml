@@ -1,14 +1,20 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Steve Testa'
+description: ''
+author: 'Steve Testa'
 inputs:
-  nupkg-path: 
+  nupkgPath: 
     required: true
     description: 'path to the nupkg'
-  version: 
+  nuspecName:
     required: true
+    description: ''
+  version: 
+    required: false
     description: 'NuGet Package Version'
     default: '0.1.0'
+  repositoryUrl:
+    required: false
+    description: ''
 runs:
   using: 'node12'
   main: 'dist/index.js'

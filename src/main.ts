@@ -4,19 +4,24 @@ import convert from 'xml-js'
 
 async function run(): Promise<void> {
   try {
-    const nupkgPath: string = core.getInput('nupkg-path')
-    const version: string = core.getInput('version')
+      // input variables from action
+      const nupkgPath: string = core.getInput('nupkgPath')
+      const nuspecName: string = core.getInput('nuspecName')
+      const version: string = core.getInput('version')
+      const repo: string = core.getInput('repositoryUrl') 
 
-      let folder = await utils.unpack(nupkgPath);
-      let manifest = await utils.getManifest(folder);
+      // read the manifest from the package
+      let data = await utils.getManifest(nupkgPath, nuspecName);
+      let manifest = convert.xml2js(data)
 
+      //// update the manifest metadata
       let metadata: convert.Element[] = manifest.elements[0].elements[0].elements // todo: get these elements in a better way
-      utils.updateMetadata(metadata, "version", "0.2.0")
-      utils.addRepositoryMetadata(metadata, "git", "https://github.com/stesta/repo")
+      utils.updateXmlNode(metadata, "version", version)
+      utils.addRepositoryXmlNode(metadata, "git", repo)
 
-      await utils.repack(folder, manifest);
+      // write the updated manifest to the package
+      await utils.updateManifest(nupkgPath, nuspecName, convert.js2xml(manifest));
 
-    core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
