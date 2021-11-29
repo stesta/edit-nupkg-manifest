@@ -26,6 +26,7 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.6.0",
+    "fs.promises": "^0.1.2",
     "jszip": "^3.7.1",
     "xml-js": "^1.6.11"
   },

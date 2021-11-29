@@ -1,14 +1,14 @@
 import JSZip from 'jszip'
-import fs from 'fs/promises'
+import {promises as fs} from 'fs'
 import convert from 'xml-js'
 
 export async function getManifest(
   nupkgPath: string,
   nuspecName: string
 ): Promise<string> {
-  var data = await fs.readFile(nupkgPath)
-  var zip = await JSZip.loadAsync(data)
-  var manifest = await zip.files[nuspecName].async('string')
+  let data = await fs.readFile(nupkgPath)
+  let zip = await JSZip.loadAsync(data)
+  let manifest = await zip.files[nuspecName].async('string')
 
   return manifest
 }
@@ -18,8 +18,8 @@ export async function updateManifest(
   nuspecName: string,
   xml: string
 ): Promise<void> {
-  var data = await fs.readFile(nupkgPath)
-  var zip = await JSZip.loadAsync(data)
+  let data = await fs.readFile(nupkgPath)
+  let zip = await JSZip.loadAsync(data)
   zip.file(nuspecName, xml)
 }
 

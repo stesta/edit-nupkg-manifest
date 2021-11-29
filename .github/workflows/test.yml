@@ -21,4 +21,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          milliseconds: 1000
+          nupkgPath: '__tests__/test.nupkg'
+          nuspecName: 'test.nuspec'
+          version: '1.2.3'
+          repositoryUrl: 'https://github.com/stesta/nuspec-editor-action'

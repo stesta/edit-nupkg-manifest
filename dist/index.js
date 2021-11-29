@@ -90,10 +90,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.addRepositoryXmlNode = exports.updateXmlNode = exports.updateManifest = exports.getManifest = void 0;
 const jszip_1 = __importDefault(__nccwpck_require__(3592));
-const promises_1 = __importDefault(__nccwpck_require__(3292));
+const fs_1 = __nccwpck_require__(7147);
 function getManifest(nupkgPath, nuspecName) {
     return __awaiter(this, void 0, void 0, function* () {
-        var data = yield promises_1.default.readFile(nupkgPath);
+        var data = yield fs_1.promises.readFile(nupkgPath);
         var zip = yield jszip_1.default.loadAsync(data);
         var manifest = yield zip.files[nuspecName].async('string');
         return manifest;
@@ -102,7 +102,7 @@ function getManifest(nupkgPath, nuspecName) {
 exports.getManifest = getManifest;
 function updateManifest(nupkgPath, nuspecName, xml) {
     return __awaiter(this, void 0, void 0, function* () {
-        var data = yield promises_1.default.readFile(nupkgPath);
+        var data = yield fs_1.promises.readFile(nupkgPath);
         var zip = yield jszip_1.default.loadAsync(data);
         zip.file(nuspecName, xml);
     });
@@ -18786,14 +18786,6 @@ module.exports = require("events");
 
 "use strict";
 module.exports = require("fs");
-
-/***/ }),
-
-/***/ 3292:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs/promises");
 
 /***/ }),
 

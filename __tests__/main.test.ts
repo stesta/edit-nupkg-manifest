@@ -2,7 +2,7 @@ import * as process from 'process'
 import * as cp from 'child_process'
 import * as path from 'path'
 import {expect, test} from '@jest/globals'
-import fs from 'fs/promises'
+import {promises as fs} from 'fs'
 import convert from 'xml-js'
 import {updateXmlNode, addRepositoryXmlNode} from '../src/nupkg-utils'
 
