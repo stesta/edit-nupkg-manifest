@@ -93,25 +93,24 @@ const jszip_1 = __importDefault(__nccwpck_require__(3592));
 const fs_1 = __nccwpck_require__(7147);
 function getManifest(nupkgPath, nuspecName) {
     return __awaiter(this, void 0, void 0, function* () {
-        var data = yield fs_1.promises.readFile(nupkgPath);
-        var zip = yield jszip_1.default.loadAsync(data);
-        var manifest = yield zip.files[nuspecName].async('string');
+        let data = yield fs_1.promises.readFile(nupkgPath);
+        let zip = yield jszip_1.default.loadAsync(data);
+        let manifest = yield zip.files[nuspecName].async('string');
         return manifest;
     });
 }
 exports.getManifest = getManifest;
 function updateManifest(nupkgPath, nuspecName, xml) {
     return __awaiter(this, void 0, void 0, function* () {
-        var data = yield fs_1.promises.readFile(nupkgPath);
-        var zip = yield jszip_1.default.loadAsync(data);
+        let data = yield fs_1.promises.readFile(nupkgPath);
+        let zip = yield jszip_1.default.loadAsync(data);
         zip.file(nuspecName, xml);
     });
 }
 exports.updateManifest = updateManifest;
 function updateXmlNode(metadata, name, text) {
     var _a, _b;
-    let field = (_b = (_a = metadata
-        .find(el => el.name == name)) === null || _a === void 0 ? void 0 : _a.elements) === null || _b === void 0 ? void 0 : _b.find(el => el.type == 'text');
+    let field = (_b = (_a = metadata.find(el => el.name == name)) === null || _a === void 0 ? void 0 : _a.elements) === null || _b === void 0 ? void 0 : _b.find(el => el.type == 'text');
     // is there a good pattern matching solution in typescript?
     if (field != undefined) {
         field.text = text;
