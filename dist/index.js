@@ -45,19 +45,19 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // input variables from action
-            //const nupkgPath: string = core.getInput('nupkgPath')
-            //const nuspecName: string = core.getInput('nuspecName')
-            //const version: string = core.getInput('version')
-            //const repo: string = core.getInput('repositoryUrl') 
+            const nupkgPath = core.getInput('nupkgPath');
+            const nuspecName = core.getInput('nuspecName');
+            const version = core.getInput('version');
+            const repo = core.getInput('repositoryUrl');
             // read the manifest from the package
-            let data = yield utils.getManifest("../__tests__/HylandCheckout.Web.0.1.0.nupkg", "HylandCheckout.Web.nuspec");
+            let data = yield utils.getManifest(nupkgPath, nuspecName);
             let manifest = xml_js_1.default.xml2js(data);
             // update the manifest metadata
             let metadata = manifest.elements[0].elements[0].elements; // todo: get these elements in a better way
-            utils.updateXmlNode(metadata, "version", "0.2.0");
-            utils.addRepositoryXmlNode(metadata, "git", "https://github.com/stesta/repo");
+            utils.updateXmlNode(metadata, 'version', version);
+            utils.addRepositoryXmlNode(metadata, 'git', repo);
             // write the updated manifest to the package
-            yield utils.updateManifest("../__tests__/HylandCheckout.Web.0.1.0.nupkg", "HylandCheckout.Web.nuspec", xml_js_1.default.js2xml(manifest));
+            yield utils.updateManifest(nupkgPath, nuspecName, xml_js_1.default.js2xml(manifest));
         }
         catch (error) {
             if (error instanceof Error)
@@ -90,25 +90,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.addRepositoryXmlNode = exports.updateXmlNode = exports.updateManifest = exports.getManifest = void 0;
 const jszip_1 = __importDefault(__nccwpck_require__(3592));
-const promises_1 = __importDefault(__nccwpck_require__(9225));
+const promises_1 = __importDefault(__nccwpck_require__(3292));
 function getManifest(nupkgPath, nuspecName) {
     return __awaiter(this, void 0, void 0, function* () {
         var data = yield promises_1.default.readFile(nupkgPath);
         var zip = yield jszip_1.default.loadAsync(data);
-        var manifest = yield zip.files[nuspecName].async("string");
+        var manifest = yield zip.files[nuspecName].async('string');
         return manifest;
     });
 }
 exports.getManifest = getManifest;
 function updateManifest(nupkgPath, nuspecName, xml) {
     return __awaiter(this, void 0, void 0, function* () {
+        var data = yield promises_1.default.readFile(nupkgPath);
+        var zip = yield jszip_1.default.loadAsync(data);
+        zip.file(nuspecName, xml);
     });
 }
 exports.updateManifest = updateManifest;
 function updateXmlNode(metadata, name, text) {
     var _a, _b;
     let field = (_b = (_a = metadata
-        .find(el => el.name == name)) === null || _a === void 0 ? void 0 : _a.elements) === null || _b === void 0 ? void 0 : _b.find(el => el.type == "text");
+        .find(el => el.name == name)) === null || _a === void 0 ? void 0 : _a.elements) === null || _b === void 0 ? void 0 : _b.find(el => el.type == 'text');
     // is there a good pattern matching solution in typescript?
     if (field != undefined) {
         field.text = text;
@@ -166,7 +169,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.issue = exports.issueCommand = void 0;
-const os = __importStar(__nccwpck_require__(2087));
+const os = __importStar(__nccwpck_require__(2037));
 const utils_1 = __nccwpck_require__(5278);
 /**
  * Commands
@@ -277,8 +280,8 @@ exports.getIDToken = exports.getState = exports.saveState = exports.group = expo
 const command_1 = __nccwpck_require__(7351);
 const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(5278);
-const os = __importStar(__nccwpck_require__(2087));
-const path = __importStar(__nccwpck_require__(5622));
+const os = __importStar(__nccwpck_require__(2037));
+const path = __importStar(__nccwpck_require__(1017));
 const oidc_utils_1 = __nccwpck_require__(8041);
 /**
  * The code to exit an action
@@ -587,8 +590,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.issueCommand = void 0;
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const fs = __importStar(__nccwpck_require__(5747));
-const os = __importStar(__nccwpck_require__(2087));
+const fs = __importStar(__nccwpck_require__(7147));
+const os = __importStar(__nccwpck_require__(2037));
 const utils_1 = __nccwpck_require__(5278);
 function issueCommand(command, message) {
     const filePath = process.env[`GITHUB_${command}`];
@@ -810,8 +813,8 @@ exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHand
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const http = __nccwpck_require__(8605);
-const https = __nccwpck_require__(7211);
+const http = __nccwpck_require__(3685);
+const https = __nccwpck_require__(5687);
 const pm = __nccwpck_require__(6443);
 let tunnel;
 var HttpCodes;
@@ -1519,7 +1522,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __nccwpck_require__(4293).Buffer.isBuffer;
+exports.isBuffer = __nccwpck_require__(4300).Buffer.isBuffer;
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -1613,7 +1616,7 @@ function immediate(task) {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 try {
-  var util = __nccwpck_require__(1669);
+  var util = __nccwpck_require__(3837);
   /* istanbul ignore next */
   if (typeof util.inherits !== 'function') throw '';
   module.exports = util.inherits;
@@ -3031,7 +3034,7 @@ module.exports = NodejsStreamInputAdapter;
 "use strict";
 
 
-var Readable = __nccwpck_require__(1642).Readable;
+var Readable = (__nccwpck_require__(1642).Readable);
 
 var utils = __nccwpck_require__(7898);
 utils.inherits(NodejsStreamOutputAdapter, Readable);
@@ -4571,7 +4574,7 @@ else {
 }
 
 try {
-    exports.nodestream = !!__nccwpck_require__(1642).Readable;
+    exports.nodestream = !!(__nccwpck_require__(1642).Readable);
 } catch(e) {
     exports.nodestream = false;
 }
@@ -6372,7 +6375,7 @@ function race(iterable) {
 // Top level file is just a mixin of submodules & constants
 
 
-var assign    = __nccwpck_require__(5483).assign;
+var assign    = (__nccwpck_require__(5483).assign);
 
 var deflate   = __nccwpck_require__(7265);
 var inflate   = __nccwpck_require__(6522);
@@ -13567,7 +13570,7 @@ var Duplex;
 Readable.ReadableState = ReadableState;
 
 /*<replacement>*/
-var EE = __nccwpck_require__(8614).EventEmitter;
+var EE = (__nccwpck_require__(2361).EventEmitter);
 
 var EElistenerCount = function (emitter, type) {
   return emitter.listeners(type).length;
@@ -13580,7 +13583,7 @@ var Stream = __nccwpck_require__(2387);
 
 /*<replacement>*/
 
-var Buffer = __nccwpck_require__(1867).Buffer;
+var Buffer = (__nccwpck_require__(1867).Buffer);
 var OurUint8Array = global.Uint8Array || function () {};
 function _uint8ArrayToBuffer(chunk) {
   return Buffer.from(chunk);
@@ -13597,7 +13600,7 @@ util.inherits = __nccwpck_require__(4124);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __nccwpck_require__(1669);
+var debugUtil = __nccwpck_require__(3837);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -13697,7 +13700,7 @@ function ReadableState(options, stream) {
   this.decoder = null;
   this.encoding = null;
   if (options.encoding) {
-    if (!StringDecoder) StringDecoder = __nccwpck_require__(4841)/* .StringDecoder */ .s;
+    if (!StringDecoder) StringDecoder = (__nccwpck_require__(4841)/* .StringDecoder */ .s);
     this.decoder = new StringDecoder(options.encoding);
     this.encoding = options.encoding;
   }
@@ -13853,7 +13856,7 @@ Readable.prototype.isPaused = function () {
 
 // backwards compatibility.
 Readable.prototype.setEncoding = function (enc) {
-  if (!StringDecoder) StringDecoder = __nccwpck_require__(4841)/* .StringDecoder */ .s;
+  if (!StringDecoder) StringDecoder = (__nccwpck_require__(4841)/* .StringDecoder */ .s);
   this._readableState.decoder = new StringDecoder(enc);
   this._readableState.encoding = enc;
   return this;
@@ -14855,7 +14858,7 @@ var Stream = __nccwpck_require__(2387);
 
 /*<replacement>*/
 
-var Buffer = __nccwpck_require__(1867).Buffer;
+var Buffer = (__nccwpck_require__(1867).Buffer);
 var OurUint8Array = global.Uint8Array || function () {};
 function _uint8ArrayToBuffer(chunk) {
   return Buffer.from(chunk);
@@ -15471,8 +15474,8 @@ Writable.prototype._destroy = function (err, cb) {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Buffer = __nccwpck_require__(1867).Buffer;
-var util = __nccwpck_require__(1669);
+var Buffer = (__nccwpck_require__(1867).Buffer);
+var util = __nccwpck_require__(3837);
 
 function copyBuffer(src, target, offset) {
   src.copy(target, offset);
@@ -15633,7 +15636,7 @@ module.exports = {
 /***/ 2387:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-module.exports = __nccwpck_require__(2413);
+module.exports = __nccwpck_require__(2781);
 
 
 /***/ }),
@@ -15641,7 +15644,7 @@ module.exports = __nccwpck_require__(2413);
 /***/ 1642:
 /***/ ((module, exports, __nccwpck_require__) => {
 
-var Stream = __nccwpck_require__(2413);
+var Stream = __nccwpck_require__(2781);
 if (process.env.READABLE_STREAM === 'disable' && Stream) {
   module.exports = Stream;
   exports = module.exports = Stream.Readable;
@@ -15668,7 +15671,7 @@ if (process.env.READABLE_STREAM === 'disable' && Stream) {
 /***/ ((module, exports, __nccwpck_require__) => {
 
 /* eslint-disable node/no-deprecated-api */
-var buffer = __nccwpck_require__(4293)
+var buffer = __nccwpck_require__(4300)
 var Buffer = buffer.Buffer
 
 // alternative to using Object.keys for old browsers
@@ -15898,7 +15901,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 
   var Stream
   try {
-    Stream = __nccwpck_require__(2413).Stream
+    Stream = (__nccwpck_require__(2781).Stream)
   } catch (ex) {
     Stream = function () {}
   }
@@ -15968,7 +15971,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
       typeof Buffer.isBuffer === 'function' &&
       Buffer.isBuffer(data)) {
       if (!this._decoder) {
-        var SD = __nccwpck_require__(4304).StringDecoder
+        var SD = (__nccwpck_require__(1576).StringDecoder)
         this._decoder = new SD('utf8')
       }
       data = this._decoder.write(data)
@@ -17349,7 +17352,7 @@ module.exports = typeof setImmediate === 'function' ? setImmediate :
 
 /*<replacement>*/
 
-var Buffer = __nccwpck_require__(1867).Buffer;
+var Buffer = (__nccwpck_require__(1867).Buffer);
 /*</replacement>*/
 
 var isEncoding = Buffer.isEncoding || function (encoding) {
@@ -17637,13 +17640,13 @@ module.exports = __nccwpck_require__(4219);
 "use strict";
 
 
-var net = __nccwpck_require__(1631);
-var tls = __nccwpck_require__(4016);
-var http = __nccwpck_require__(8605);
-var https = __nccwpck_require__(7211);
-var events = __nccwpck_require__(8614);
-var assert = __nccwpck_require__(2357);
-var util = __nccwpck_require__(1669);
+var net = __nccwpck_require__(1808);
+var tls = __nccwpck_require__(4404);
+var http = __nccwpck_require__(3685);
+var https = __nccwpck_require__(5687);
+var events = __nccwpck_require__(2361);
+var assert = __nccwpck_require__(9491);
+var util = __nccwpck_require__(3837);
 
 
 exports.httpOverHttp = httpOverHttp;
@@ -17911,7 +17914,7 @@ exports.debug = debug; // for test
  * For Node.js, simply re-export the core `util.deprecate` function.
  */
 
-module.exports = __nccwpck_require__(1669).deprecate;
+module.exports = __nccwpck_require__(3837).deprecate;
 
 
 /***/ }),
@@ -17958,7 +17961,7 @@ module.exports = {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 var helper = __nccwpck_require__(6717);
-var isArray = __nccwpck_require__(1709).isArray;
+var isArray = (__nccwpck_require__(1709).isArray);
 
 var currentElement, currentElementName;
 
@@ -18309,7 +18312,7 @@ module.exports = function (json, options) {
 /***/ 6717:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-var isArray = __nccwpck_require__(1709).isArray;
+var isArray = (__nccwpck_require__(1709).isArray);
 
 module.exports = {
 
@@ -18362,7 +18365,7 @@ module.exports = {
 var sax = __nccwpck_require__(2043);
 var expat /*= require('node-expat');*/ = { on: function () { }, parse: function () { } };
 var helper = __nccwpck_require__(6717);
-var isArray = __nccwpck_require__(1709).isArray;
+var isArray = (__nccwpck_require__(1709).isArray);
 
 var options;
 var pureJsParser = true;
@@ -18754,7 +18757,7 @@ module.exports = function(xml, userOptions) {
 
 /***/ }),
 
-/***/ 2357:
+/***/ 9491:
 /***/ ((module) => {
 
 "use strict";
@@ -18762,7 +18765,7 @@ module.exports = require("assert");
 
 /***/ }),
 
-/***/ 4293:
+/***/ 4300:
 /***/ ((module) => {
 
 "use strict";
@@ -18770,7 +18773,7 @@ module.exports = require("buffer");
 
 /***/ }),
 
-/***/ 8614:
+/***/ 2361:
 /***/ ((module) => {
 
 "use strict";
@@ -18778,7 +18781,7 @@ module.exports = require("events");
 
 /***/ }),
 
-/***/ 5747:
+/***/ 7147:
 /***/ ((module) => {
 
 "use strict";
@@ -18786,7 +18789,7 @@ module.exports = require("fs");
 
 /***/ }),
 
-/***/ 9225:
+/***/ 3292:
 /***/ ((module) => {
 
 "use strict";
@@ -18794,7 +18797,7 @@ module.exports = require("fs/promises");
 
 /***/ }),
 
-/***/ 8605:
+/***/ 3685:
 /***/ ((module) => {
 
 "use strict";
@@ -18802,7 +18805,7 @@ module.exports = require("http");
 
 /***/ }),
 
-/***/ 7211:
+/***/ 5687:
 /***/ ((module) => {
 
 "use strict";
@@ -18810,7 +18813,7 @@ module.exports = require("https");
 
 /***/ }),
 
-/***/ 1631:
+/***/ 1808:
 /***/ ((module) => {
 
 "use strict";
@@ -18818,7 +18821,7 @@ module.exports = require("net");
 
 /***/ }),
 
-/***/ 2087:
+/***/ 2037:
 /***/ ((module) => {
 
 "use strict";
@@ -18826,7 +18829,7 @@ module.exports = require("os");
 
 /***/ }),
 
-/***/ 5622:
+/***/ 1017:
 /***/ ((module) => {
 
 "use strict";
@@ -18834,7 +18837,7 @@ module.exports = require("path");
 
 /***/ }),
 
-/***/ 2413:
+/***/ 2781:
 /***/ ((module) => {
 
 "use strict";
@@ -18842,7 +18845,7 @@ module.exports = require("stream");
 
 /***/ }),
 
-/***/ 4304:
+/***/ 1576:
 /***/ ((module) => {
 
 "use strict";
@@ -18850,7 +18853,7 @@ module.exports = require("string_decoder");
 
 /***/ }),
 
-/***/ 4016:
+/***/ 4404:
 /***/ ((module) => {
 
 "use strict";
@@ -18858,7 +18861,7 @@ module.exports = require("tls");
 
 /***/ }),
 
-/***/ 1669:
+/***/ 3837:
 /***/ ((module) => {
 
 "use strict";
