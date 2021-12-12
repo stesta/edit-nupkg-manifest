@@ -4,9 +4,9 @@ import * as path from 'path'
 import {expect, test} from '@jest/globals'
 import {promises as fs} from 'fs'
 import convert from 'xml-js'
-import {updateXmlNode, addRepositoryXmlNode} from '../src/nupkg-utils'
+import {getManifest, updateXmlNode, addRepositoryXmlNode} from '../src/nupkg-utils'
 
-test('get manifest directly from zip', async () => {
+test('can update a manifest', async () => {
   let data = await fs.readFile('./__tests__/test.nuspec', 'utf-8')
   let manifest = convert.xml2js(data)
   let metadata: convert.Element[] = manifest.elements[0].elements[0].elements // todo: get these elements in a better way
@@ -17,6 +17,16 @@ test('get manifest directly from zip', async () => {
   let updated = JSON.stringify(manifest)
 
   expect(updated).not.toBe(original)
+})
+
+test('get manifest from zip', async () => {
+  let data = await getManifest('./__tests__/test.nupkg', 'test.nuspec')
+  let manifest = convert.xml2js(data)
+  let metadata: convert.Element[] = manifest.elements[0].elements[0].elements // todo: get these elements in a better way
+
+  let field = metadata.find(el => el.name == "id")?.elements!?.find(el => el.type == 'text')
+
+  expect(field).toStrictEqual({"text": "Test", "type": "text"})
 })
 
 // shows how the runner will run a javascript action with env / stdout protocol
@@ -32,6 +42,5 @@ test('test runs', () => {
     env: process.env
   }
 
-  //console.log(cp.execFileSync(np, [ip], options).toString())
-  //cp.execFileSync(np, [ip], options)
+  cp.execFileSync(np, [ip], options)
 })
