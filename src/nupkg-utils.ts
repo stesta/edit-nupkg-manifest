@@ -11,9 +11,14 @@ export async function getManifest(nupkgPath: string, nuspecName: string): Promis
 }
 
 export async function updateManifest(nupkgPath: string, nuspecName: string, xml: string): Promise<void> {
+  // update the internal representation
   let data = await fs.readFile(nupkgPath)
   let zip = await JSZip.loadAsync(data)
   zip.file(nuspecName, xml)
+
+  // write back to file
+  let generated = await zip.generateAsync({type: "nodebuffer"})
+  await fs.writeFile(nupkgPath, generated)
 }
 
 export function updateXmlNode(metadata: convert.Element[], name: string, text: string): convert.Element[] {

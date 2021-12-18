@@ -4,7 +4,7 @@ import * as path from 'path'
 import {expect, test} from '@jest/globals'
 import {promises as fs} from 'fs'
 import convert from 'xml-js'
-import {getManifest, updateXmlNode, addRepositoryXmlNode} from '../src/nupkg-utils'
+import {getManifest, updateXmlNode, addRepositoryXmlNode, updateManifest} from '../src/nupkg-utils'
 
 test('can update a manifest', async () => {
   let data = await fs.readFile('./__tests__/test.nuspec', 'utf-8')
@@ -28,6 +28,22 @@ test('get manifest from zip', async () => {
 
   expect(field).toStrictEqual({"text": "Test", "type": "text"})
 })
+
+// test('update nuget package', async () => {
+//   await fs.copyFile('./__tests__/test.nupkg', './__tests__/test2.nupkg')
+
+//   let data = await getManifest('./__tests__/test2.nupkg', 'test.nuspec')
+//   let manifest = convert.xml2js(data)
+
+//   // update the manifest metadata
+//   let metadata: convert.Element[] = manifest.elements[0].elements[0].elements // todo: get these elements in a better way
+//   updateXmlNode(metadata, 'version', '0.2.0')
+//   addRepositoryXmlNode(metadata, 'git', 'https://github.com/stesta')
+
+//   // write the updated manifest to the package
+//   var xml = convert.js2xml(manifest)
+//   await updateManifest('./__tests__/test2.nupkg', 'test.nuspec', xml)
+// })
 
 // shows how the runner will run a javascript action with env / stdout protocol
 test('test runs', () => {

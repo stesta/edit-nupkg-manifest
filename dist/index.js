@@ -105,6 +105,14 @@ function updateManifest(nupkgPath, nuspecName, xml) {
         let data = yield fs_1.promises.readFile(nupkgPath);
         let zip = yield jszip_1.default.loadAsync(data);
         zip.file(nuspecName, xml);
+        yield zip.generateAsync({
+            type: "base64",
+            compression: "DEFLATE",
+            compressionOptions: {
+                level: 6
+            }
+        });
+        console.log(zip);
     });
 }
 exports.updateManifest = updateManifest;
