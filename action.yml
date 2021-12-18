@@ -1,5 +1,5 @@
-name: 'Steve Testa'
-description: ''
+name: 'Edit NuGet Package Manifest'
+description: 'Updates the manifest metadata inside an existing nuget package.'
 author: 'Steve Testa'
 inputs:
   nupkgPath: 

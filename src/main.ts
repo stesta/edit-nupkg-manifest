@@ -14,10 +14,18 @@ async function run(): Promise<void> {
     let data = await utils.getManifest(nupkgPath, nuspecName)
     let manifest = convert.xml2js(data)
 
-    // update the manifest metadata
+    // get the manifest metadata
     let metadata: convert.Element[] = manifest.elements[0].elements[0].elements // todo: get these elements in a better way
-    utils.updateXmlNode(metadata, 'version', version)
-    utils.addRepositoryXmlNode(metadata, 'git', repo)
+    
+    // update version
+    if (typeof version != 'undefined' && version) {
+      utils.updateXmlNode(metadata, 'version', version)
+    }
+
+    // update repositoryUrl
+    if (typeof repo != 'undefined' && repo) {
+      utils.addRepositoryXmlNode(metadata, 'git', repo)
+    }
 
     // write the updated manifest to the package
     await utils.updateManifest(nupkgPath, nuspecName, convert.js2xml(manifest))
