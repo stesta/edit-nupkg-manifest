@@ -52,10 +52,16 @@ function run() {
             // read the manifest from the package
             let data = yield utils.getManifest(nupkgPath, nuspecName);
             let manifest = xml_js_1.default.xml2js(data);
-            // update the manifest metadata
+            // get the manifest metadata
             let metadata = manifest.elements[0].elements[0].elements; // todo: get these elements in a better way
-            utils.updateXmlNode(metadata, 'version', version);
-            utils.addRepositoryXmlNode(metadata, 'git', repo);
+            // update version
+            if (typeof version != 'undefined' && version) {
+                utils.updateXmlNode(metadata, 'version', version);
+            }
+            // update repositoryUrl
+            if (typeof repo != 'undefined' && repo) {
+                utils.addRepositoryXmlNode(metadata, 'git', repo);
+            }
             // write the updated manifest to the package
             yield utils.updateManifest(nupkgPath, nuspecName, xml_js_1.default.js2xml(manifest));
         }
@@ -102,17 +108,13 @@ function getManifest(nupkgPath, nuspecName) {
 exports.getManifest = getManifest;
 function updateManifest(nupkgPath, nuspecName, xml) {
     return __awaiter(this, void 0, void 0, function* () {
+        // update the internal representation
         let data = yield fs_1.promises.readFile(nupkgPath);
         let zip = yield jszip_1.default.loadAsync(data);
         zip.file(nuspecName, xml);
-        yield zip.generateAsync({
-            type: "base64",
-            compression: "DEFLATE",
-            compressionOptions: {
-                level: 6
-            }
-        });
-        console.log(zip);
+        // write back to file
+        let generated = yield zip.generateAsync({ type: "nodebuffer" });
+        yield fs_1.promises.writeFile(nupkgPath, generated);
     });
 }
 exports.updateManifest = updateManifest;
