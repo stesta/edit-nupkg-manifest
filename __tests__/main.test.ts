@@ -6,6 +6,18 @@ import {promises as fs} from 'fs'
 import convert from 'xml-js'
 import {getManifest, updateXmlNode, addRepositoryXmlNode, updateManifest} from '../src/nupkg-utils'
 
+
+test('get manifest from zip', async () => {
+  let data = await getManifest('./__tests__/test.nupkg')
+  let manifest = convert.xml2js(data)
+  let metadata: convert.Element[] = manifest.elements[0].elements[0].elements // todo: get these elements in a better way
+
+  let field = metadata.find(el => el.name == "id")?.elements!?.find(el => el.type == 'text')
+
+  expect(field).toStrictEqual({"text": "Test", "type": "text"})
+})
+
+
 test('can update a manifest', async () => {
   let data = await fs.readFile('./__tests__/test.nuspec', 'utf-8')
   let manifest = convert.xml2js(data)
@@ -19,15 +31,6 @@ test('can update a manifest', async () => {
   expect(updated).not.toBe(original)
 })
 
-test('get manifest from zip', async () => {
-  let data = await getManifest('./__tests__/test.nupkg', 'test.nuspec')
-  let manifest = convert.xml2js(data)
-  let metadata: convert.Element[] = manifest.elements[0].elements[0].elements // todo: get these elements in a better way
-
-  let field = metadata.find(el => el.name == "id")?.elements!?.find(el => el.type == 'text')
-
-  expect(field).toStrictEqual({"text": "Test", "type": "text"})
-})
 
 // test('update nuget package', async () => {
 //   await fs.copyFile('./__tests__/test.nupkg', './__tests__/test2.nupkg')
