@@ -10,6 +10,7 @@ async function run(): Promise<void> {
     const nuspecPath = core.getInput('nuspecPath')
     const id = core.getInput('id')
     const title = core.getInput('title')
+    const description = core.getInput('description')
     const version = core.getInput('version')
     const authors = core.getInput('authors')
     const owners = core.getInput('owners')
@@ -28,6 +29,7 @@ async function run(): Promise<void> {
     // update metadata
     if (typeof id != 'undefined' && id) { utils.updateXmlNode(metadata, 'id', id) }
     if (typeof title != 'undefined' && title) { utils.updateXmlNode(metadata, 'title', title) }
+    if (typeof description != 'undefined' && description) { utils.updateXmlNode(metadata, 'description', description) }
     if (typeof version != 'undefined' && version) { utils.updateXmlNode(metadata, 'version', version) }
     if (typeof authors != 'undefined' && authors) { utils.updateXmlNode(metadata, 'authors', authors) }
     if (typeof owners != 'undefined' && owners) { utils.updateXmlNode(metadata, 'owners', owners) }

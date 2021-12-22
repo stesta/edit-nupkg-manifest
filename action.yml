@@ -14,6 +14,9 @@ inputs:
   title: 
     required: false
     description: ''
+  description: 
+    required: false
+    description: ''
   version: 
     required: false
     description: 'NuGet Package Version'
