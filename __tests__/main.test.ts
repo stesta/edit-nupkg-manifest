@@ -4,11 +4,22 @@ import * as path from 'path'
 import {expect, test} from '@jest/globals'
 import {promises as fs} from 'fs'
 import convert from 'xml-js'
-import {getManifest, updateXmlNode, addRepositoryXmlNode, updateManifest} from '../src/nupkg-utils'
+import {getManifestFromPackage, updateXmlNode, addRepositoryXmlNode, updateManifest, getManifestFromFile} from '../src/nupkg-utils'
 
 
 test('get manifest from zip', async () => {
-  let data = await getManifest('./__tests__/test.nupkg')
+  let data = await getManifestFromPackage('./__tests__/test.nupkg')
+  let manifest = convert.xml2js(data)
+  let metadata: convert.Element[] = manifest.elements[0].elements[0].elements // todo: get these elements in a better way
+
+  let field = metadata.find(el => el.name == "id")?.elements!?.find(el => el.type == 'text')
+
+  expect(field).toStrictEqual({"text": "Test", "type": "text"})
+})
+
+
+test('get manifest from file', async () => {
+  let data = await getManifestFromFile('./__tests__/test.nuspec')
   let manifest = convert.xml2js(data)
   let metadata: convert.Element[] = manifest.elements[0].elements[0].elements // todo: get these elements in a better way
 

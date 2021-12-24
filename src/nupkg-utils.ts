@@ -7,12 +7,18 @@ function getManifestName(zip: JSZip): string {
   return files[0].name
 }
 
-export async function getManifest(nupkgPath: string): Promise<string> {
+export async function getManifestFromPackage(nupkgPath: string): Promise<string> {
   let data = await fs.readFile(nupkgPath)
   let zip = await JSZip.loadAsync(data)
   let nuspec = getManifestName(zip)
   let manifest = await zip.files[nuspec].async('string')
 
+  return manifest
+}
+
+export async function getManifestFromFile(nuspecPath: string): Promise<string> {
+  let manifest = await fs.readFile(nuspecPath, 'utf-8')
+  
   return manifest
 }
 
