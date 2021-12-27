@@ -18,7 +18,7 @@ export async function getManifestFromPackage(nupkgPath: string): Promise<string>
 
 export async function getManifestFromFile(nuspecPath: string): Promise<string> {
   let manifest = await fs.readFile(nuspecPath, 'utf-8')
-  
+
   return manifest
 }
 
@@ -30,7 +30,7 @@ export async function updateManifest(nupkgPath: string, xml: string): Promise<vo
   zip.file(nuspec, xml)
 
   // write back to file
-  let generated = await zip.generateAsync({type: "nodebuffer"})
+  let generated = await zip.generateAsync({type: 'nodebuffer'})
   await fs.writeFile(nupkgPath, generated)
 }
 
@@ -54,13 +54,12 @@ export function updateXmlNode(metadata: convert.Element[], name: string, text: s
 }
 
 export function addRepositoryXmlNode(metadata: convert.Element[], type: string, url: string): convert.Element[] {
-  let field = metadata.find(el => el.name === "repository")?.attributes
+  let field = metadata.find(el => el.name === 'repository')?.attributes
 
-  if (field != undefined)  {
+  if (field != undefined) {
     field.type = type
     field.url = url
-  }
-  else {
+  } else {
     metadata.push({
       type: 'element',
       name: 'repository',

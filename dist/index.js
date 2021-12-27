@@ -41,29 +41,52 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const utils = __importStar(__nccwpck_require__(9530));
 const xml_js_1 = __importDefault(__nccwpck_require__(8821));
+const fs_1 = __nccwpck_require__(7147);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // input variables from action
             const nupkgPath = core.getInput('nupkgPath');
-            const nuspecName = core.getInput('nuspecName');
+            const nuspecPath = core.getInput('nuspecPath');
+            const id = core.getInput('id');
+            const title = core.getInput('title');
+            const description = core.getInput('description');
             const version = core.getInput('version');
+            const authors = core.getInput('authors');
+            const owners = core.getInput('owners');
             const repo = core.getInput('repositoryUrl');
-            // read the manifest from the package
-            let data = yield utils.getManifest(nupkgPath, nuspecName);
+            // read the manifest
+            let data = (typeof nuspecPath != 'undefined' && nuspecPath)
+                ? yield fs_1.promises.readFile(nuspecPath, 'utf-8')
+                : yield utils.getManifestFromPackage(nupkgPath);
             let manifest = xml_js_1.default.xml2js(data);
             // get the manifest metadata
-            let metadata = manifest.elements[0].elements[0].elements; // todo: get these elements in a better way
-            // update version
+            // todo: get these elements in a better way
+            let metadata = manifest.elements[0].elements[0].elements;
+            // update metadata
+            if (typeof id != 'undefined' && id) {
+                utils.updateXmlNode(metadata, 'id', id);
+            }
+            if (typeof title != 'undefined' && title) {
+                utils.updateXmlNode(metadata, 'title', title);
+            }
+            if (typeof description != 'undefined' && description) {
+                utils.updateXmlNode(metadata, 'description', description);
+            }
             if (typeof version != 'undefined' && version) {
                 utils.updateXmlNode(metadata, 'version', version);
             }
-            // update repositoryUrl
+            if (typeof authors != 'undefined' && authors) {
+                utils.updateXmlNode(metadata, 'authors', authors);
+            }
+            if (typeof owners != 'undefined' && owners) {
+                utils.updateXmlNode(metadata, 'owners', owners);
+            }
             if (typeof repo != 'undefined' && repo) {
                 utils.addRepositoryXmlNode(metadata, 'git', repo);
             }
             // write the updated manifest to the package
-            yield utils.updateManifest(nupkgPath, nuspecName, xml_js_1.default.js2xml(manifest));
+            yield utils.updateManifest(nupkgPath, xml_js_1.default.js2xml(manifest));
         }
         catch (error) {
             if (error instanceof Error)
@@ -94,24 +117,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.addRepositoryXmlNode = exports.updateXmlNode = exports.updateManifest = exports.getManifest = void 0;
+exports.addRepositoryXmlNode = exports.updateXmlNode = exports.updateManifest = exports.getManifestFromFile = exports.getManifestFromPackage = void 0;
 const jszip_1 = __importDefault(__nccwpck_require__(3592));
 const fs_1 = __nccwpck_require__(7147);
-function getManifest(nupkgPath, nuspecName) {
+function getManifestName(zip) {
+    let files = zip.file(/.*\.nuspec/);
+    return files[0].name;
+}
+function getManifestFromPackage(nupkgPath) {
     return __awaiter(this, void 0, void 0, function* () {
         let data = yield fs_1.promises.readFile(nupkgPath);
         let zip = yield jszip_1.default.loadAsync(data);
-        let manifest = yield zip.files[nuspecName].async('string');
+        let nuspec = getManifestName(zip);
+        let manifest = yield zip.files[nuspec].async('string');
         return manifest;
     });
 }
-exports.getManifest = getManifest;
-function updateManifest(nupkgPath, nuspecName, xml) {
+exports.getManifestFromPackage = getManifestFromPackage;
+function getManifestFromFile(nuspecPath) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let manifest = yield fs_1.promises.readFile(nuspecPath, 'utf-8');
+        return manifest;
+    });
+}
+exports.getManifestFromFile = getManifestFromFile;
+function updateManifest(nupkgPath, xml) {
     return __awaiter(this, void 0, void 0, function* () {
         // update the internal representation
         let data = yield fs_1.promises.readFile(nupkgPath);
         let zip = yield jszip_1.default.loadAsync(data);
-        zip.file(nuspecName, xml);
+        let nuspec = getManifestName(zip);
+        zip.file(nuspec, xml);
         // write back to file
         let generated = yield zip.generateAsync({ type: "nodebuffer" });
         yield fs_1.promises.writeFile(nupkgPath, generated);
@@ -137,14 +173,22 @@ function updateXmlNode(metadata, name, text) {
 }
 exports.updateXmlNode = updateXmlNode;
 function addRepositoryXmlNode(metadata, type, url) {
-    metadata.push({
-        type: 'element',
-        name: 'repository',
-        attributes: {
-            type: type,
-            url: url
-        }
-    });
+    var _a;
+    let field = (_a = metadata.find(el => el.name === "repository")) === null || _a === void 0 ? void 0 : _a.attributes;
+    if (field != undefined) {
+        field.type = type;
+        field.url = url;
+    }
+    else {
+        metadata.push({
+            type: 'element',
+            name: 'repository',
+            attributes: {
+                type: type,
+                url: url
+            }
+        });
+    }
     return metadata;
 }
 exports.addRepositoryXmlNode = addRepositoryXmlNode;
