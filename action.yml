@@ -5,13 +5,28 @@ inputs:
   nupkgPath: 
     required: true
     description: 'path to the nupkg'
-  nuspecName:
-    required: true
+  nuspecPath:
+    required: false
+    description: 'an external nuspec file whose content will be used as the base manifest'
+  id: 
+    required: false
+    description: ''
+  title: 
+    required: false
+    description: ''
+  description: 
+    required: false
     description: ''
   version: 
     required: false
     description: 'NuGet Package Version'
     default: '0.1.0'
+  authors: 
+    required: false
+    description: ''
+  owners: 
+    required: false
+    description: ''
   repositoryUrl:
     required: false
     description: ''
