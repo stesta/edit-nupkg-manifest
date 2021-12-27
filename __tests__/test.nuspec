@@ -5,7 +5,7 @@
     <title>Test</title>
     <version>$version$</version>
     <authors>Steve Testa</authors>
-    <owners>Steve Testa</owners>
+    <owners>Testa Software</owners>
     <description>Test Package</description>
   </metadata>
 </package>

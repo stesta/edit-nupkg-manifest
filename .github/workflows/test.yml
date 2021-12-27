@@ -24,4 +24,4 @@ jobs:
           nupkgPath: './__tests__/test.nupkg'
           nuspecPath: './__tests__/test.nuspec'
           version: '1.2.3'
-          repositoryUrl: 'https://github.com/stesta/nuspec-editor-action'
+          repositoryUrl: 'https://github.com/stesta/edit-nupkg-manifest'

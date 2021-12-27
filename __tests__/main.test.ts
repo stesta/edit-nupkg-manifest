@@ -32,10 +32,25 @@ test('can update a manifest', async () => {
 })
 
 // shows how the runner will run a javascript action with env / stdout protocol
-test('test runs', () => {
+test('test run with default nuspec', () => {
   process.env['INPUT_NUPKGPATH'] = './__tests__/test.nupkg'
-  process.env['INPUT_NUSPECNAME'] = 'test.nuspec'
+  process.env['INPUT_NUSPECPATH'] = './__tests__/test.nuspec'
   process.env['INPUT_VERSION'] = '0.2.0'
+  process.env['INPUT_REPOSITORYURL'] = 'https://github.com/stesta/edit-nupkg-manifest'
+
+  const np = process.execPath
+  const ip = path.join(__dirname, '..', 'lib', 'main.js')
+  const options: cp.ExecFileSyncOptions = {
+    env: process.env
+  }
+
+  cp.execFileSync(np, [ip], options)
+})
+
+
+test('test run without default nuspec', () => {
+  process.env['INPUT_NUPKGPATH'] = './__tests__/test.nupkg'
+  process.env['INPUT_VERSION'] = '1.0.0'
   process.env['INPUT_REPOSITORYURL'] = 'https://github.com/stesta/edit-nupkg-manifest'
 
   const np = process.execPath
