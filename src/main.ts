@@ -18,7 +18,7 @@ async function run(): Promise<void> {
 
     // read the manifest
     let data = (typeof nuspecPath != 'undefined' && nuspecPath) 
-      ? (await fs.readFile(nuspecPath)).toString()
+      ? await fs.readFile(nuspecPath, 'utf-8')
       : await utils.getManifestFromPackage(nupkgPath)
     let manifest = convert.xml2js(data)
 

@@ -54,14 +54,22 @@ export function updateXmlNode(metadata: convert.Element[], name: string, text: s
 }
 
 export function addRepositoryXmlNode(metadata: convert.Element[], type: string, url: string): convert.Element[] {
-  metadata.push({
-    type: 'element',
-    name: 'repository',
-    attributes: {
-      type: type,
-      url: url
-    }
-  })
+  let field = metadata.find(el => el.name === "repository")?.attributes
+
+  if (field != undefined)  {
+    field.type = type
+    field.url = url
+  }
+  else {
+    metadata.push({
+      type: 'element',
+      name: 'repository',
+      attributes: {
+        type: type,
+        url: url
+      }
+    })
+  }
 
   return metadata
 }
